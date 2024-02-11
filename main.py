@@ -54,7 +54,7 @@ values_year_unique   = df_asylum_seekers['Year'].unique()
 values_rsd_procedure_unique  = df_asylum_seekers['RSD procedure type / level'].unique()
 
 
-def create_country_chart(values_origin_unique='Afghanistan', values_year_unique=2000, values_rsd_procedure_unique='G / FI'):
+def create_country_chart(values_origin_unique='Angola', values_year_unique=2000, values_rsd_procedure_unique='G / FI'):
     filtered_df = df_asylum_seekers[(df_asylum_seekers['Origin']== values_origin_unique) & (df_asylum_seekers['Year']==values_year_unique) 
     & (df_asylum_seekers['RSD procedure type / level']==values_rsd_procedure_unique)]
     filtered_df = filtered_df.sort_values(by="Applied during year", ascending=False).head(10)
@@ -65,7 +65,7 @@ def create_country_chart(values_origin_unique='Afghanistan', values_year_unique=
     
     return bar_fig
 
-multi_select_origin = dcc.Dropdown(id='multi_select_origin', options=values_origin_unique, value='Afghanistan', clearable=False)
+multi_select_origin = dcc.Dropdown(id='multi_select_origin', options=values_origin_unique, value='Angola', clearable=False)
 multi_select_rsd_procedure_unique = dcc.Dropdown(id='multi_select_rsd_procedure_unique', options=values_rsd_procedure_unique, value='G / FI', clearable=False)
 
 multi_select_year = dcc.Dropdown(id='multi_select_year', options=values_year_unique, value=2000, clearable=False)
@@ -131,11 +131,66 @@ d_table = DataTable(
     filter_action="native",
     page_action="native",
     page_current=0,
-    page_size=16)
+    page_size=12)
 
 
 #########################################################################################################################################################################
 
+
+df_asylum_seekers_chart = pd.read_csv("asylum_seekers_final.csv")
+
+values_country_unique_chart = df_asylum_seekers_chart['Country / territory of asylum/residence'].unique()
+values_origin_unique_chart = df_asylum_seekers_chart['Origin'].unique()
+
+values_year_unique_chart   = df_asylum_seekers_chart['Year'].unique()
+values_rsd_procedure_unique_chart  = df_asylum_seekers_chart['RSD procedure type / level'].unique()
+
+numeric_values_chart = ['Tota pending start-year', 'Total pending end-year', 'Total decisions']
+
+def create_country_charting(values_country_unique_chart='Angola', values_year_unique_chart=2000):
+    filtered_df_chart = df_asylum_seekers_chart[(df_asylum_seekers_chart['Country / territory of asylum/residence']== values_country_unique_chart) & 
+        (df_asylum_seekers_chart['Year']== values_year_unique_chart)]
+    filtered_df_chart = filtered_df_chart.sort_values(by='Applied during year', ascending=False).head(10)
+
+    bar_fig = px.bar(filtered_df_chart, x="Origin", y=numeric_values_chart, hover_name="Origin", barmode="relative", hover_data="Origin", text='Applied during year',
+    custom_data="Origin", template="seaborn", title=f"Country {values_country_unique_chart}", text_auto=True)
+    bar_fig.update_layout(paper_bgcolor='#e5ecf6', height=510)
+    
+    return bar_fig
+
+multi_select_country_chart = dcc.Dropdown(id='multi_select_country_chart', options=values_country_unique_chart, value='Angola', clearable=False)
+multi_select_year_chart = dcc.Dropdown(id='multi_select_year_chart', options=values_year_unique_chart, value=2000, clearable=False)
+
+#########################################################################################################################################################################
+
+
+df_asylum_seekers_origin = pd.read_csv("asylum_seekers_final.csv")
+
+values_unique_country = df_asylum_seekers_origin['Country / territory of asylum/residence'].unique()
+values_unique_origin = df_asylum_seekers_origin['Origin'].unique()
+
+values_unique_year   = df_asylum_seekers_origin['Year'].unique()
+values_rsd_procedure_unique_chart  = df_asylum_seekers_origin['RSD procedure type / level'].unique()
+
+numeric_values_chart_origin = ['Tota pending start-year', 'Total pending end-year', 'Total decisions']
+
+def create_origin_chart(values_unique_origin='Angola', values_unique_year=2000):
+    filtered_df_origin = df_asylum_seekers_origin[(df_asylum_seekers_origin['Origin']== values_unique_origin) & 
+        (df_asylum_seekers_origin['Year']== values_unique_year)]
+    filtered_df_origin = filtered_df_origin.sort_values(by='Applied during year', ascending=False).head(10)
+
+    bar_fig = px.bar(filtered_df_origin, x="Country / territory of asylum/residence", y=numeric_values_chart_origin, hover_name="Country / territory of asylum/residence",
+    barmode="relative", text='Applied during year',  hover_data="Country / territory of asylum/residence", 
+    custom_data="Country / territory of asylum/residence", template="seaborn", title=f"Origin {values_unique_origin}", text_auto=True)
+    bar_fig.update_layout(paper_bgcolor='#e5ecf6', height=510)
+    
+    return bar_fig
+
+select_origin = dcc.Dropdown(id='select_origin', options=values_unique_origin, value='Angola', clearable=False)
+select_origin_year = dcc.Dropdown(id='select_origin_year', options=values_unique_year, value=2000, clearable=False)
+
+
+#########################################################################################################################################################################
 
 df_asylum_seekers_density_heatmap = pd.read_csv("asylum_seekers_final.csv")
 
@@ -145,7 +200,7 @@ values_rsd_procedure_unique_density_heatmap  = df_asylum_seekers_density_heatmap
 
 numeric_values_density_heatmap = ['Tota pending start-year', 'of which UNHCR-assisted(start-year)', 'Applied during year']
 
-def create_segment_density_heatmap(values_country_unique_density_heatmap='Afghanistan', numeric_values_density_heatmap=['Tota pending start-year', 'of which UNHCR-assisted(start-year)', 'Applied during year']):
+def create_segment_density_heatmap(values_country_unique_density_heatmap='Angola', numeric_values_density_heatmap=['Tota pending start-year', 'of which UNHCR-assisted(start-year)', 'Applied during year']):
     filtered_df_density_heatmap = df_asylum_seekers_density_heatmap[(df_asylum_seekers_density_heatmap['Country / territory of asylum/residence']== values_country_unique_density_heatmap)]
     filtered_df_density_heatmap = filtered_df_density_heatmap.sort_values(by="Applied during year", ascending=False).head(10)
     bar_fig = px.density_heatmap(filtered_df_density_heatmap, x="Origin", y=numeric_values_density_heatmap, z="Rejected", template="seaborn",
@@ -156,7 +211,7 @@ def create_segment_density_heatmap(values_country_unique_density_heatmap='Afghan
     
 
 multi_select_segment_density_heatmap = dcc.Dropdown(id='multi_select_segment_density_heatmap', options=numeric_values_density_heatmap, value=['Tota pending start-year', 'of which UNHCR-assisted(start-year)', 'Applied during year'], clearable=False, multi=True)
-multi_select_origin_density_heatmap = dcc.Dropdown(id='multi_select_origin_density_heatmap', options=values_country_unique_density_heatmap, value='Afghanistan', clearable=False)
+multi_select_origin_density_heatmap = dcc.Dropdown(id='multi_select_origin_density_heatmap', options=values_country_unique_density_heatmap, value='Angola', clearable=False)
 
 #########################################################################################################################################################################
 
@@ -171,7 +226,7 @@ values_rsd_procedure_unique_density_heatmap_origin  = df_asylum_seekers_density_
 
 numeric_values_density_heatmap_origin = ['Tota pending start-year', 'of which UNHCR-assisted(start-year)', 'Applied during year']
 
-def create_segment_density_heatmap_origin(values_origin_unique_density_heatmap_origin='Afghanistan', numeric_values_density_heatmap_origin=['Tota pending start-year', 'of which UNHCR-assisted(start-year)', 'Applied during year']):
+def create_segment_density_heatmap_origin(values_origin_unique_density_heatmap_origin='Angola', numeric_values_density_heatmap_origin=['Tota pending start-year', 'of which UNHCR-assisted(start-year)', 'Applied during year']):
     filtered_df_density_heatmap_origin = df_asylum_seekers_density_heatmap_origin[(df_asylum_seekers_density_heatmap_origin['Origin']== values_origin_unique_density_heatmap_origin)]
     filtered_df_density_heatmap_origin = filtered_df_density_heatmap_origin.sort_values(by="Applied during year", ascending=False).head(10)
     bar_fig = px.density_heatmap(filtered_df_density_heatmap_origin, x="Country / territory of asylum/residence", y=numeric_values_density_heatmap_origin, z="Rejected", template="seaborn",
@@ -182,7 +237,7 @@ def create_segment_density_heatmap_origin(values_origin_unique_density_heatmap_o
     
 
 multi_select_segment_density_heatmap_origin = dcc.Dropdown(id='multi_select_segment_density_heatmap_origin', options=numeric_values_density_heatmap_origin, value=['Tota pending start-year', 'of which UNHCR-assisted(start-year)', 'Applied during year'], clearable=False, multi=True)
-multi_select_origin_density_heatmap_origin = dcc.Dropdown(id='multi_select_origin_density_heatmap_origin', options=values_origin_unique_density_heatmap_origin, value='Afghanistan', clearable=False)
+multi_select_origin_density_heatmap_origin = dcc.Dropdown(id='multi_select_origin_density_heatmap_origin', options=values_origin_unique_density_heatmap_origin, value='Angola', clearable=False)
 
 #########################################################################################################################################################################
 
@@ -198,17 +253,17 @@ values_rsd_procedure_unique_pie  = df_asylum_seekers_pie['RSD procedure type / l
 numeric_values_pie = ['Tota pending start-year', 'of which UNHCR-assisted(start-year)', 'Applied during year']
 
 
-def create_country_pie(values_country_unique_pie='Afghanistan', values_year_unique_pie=2000):
+def create_country_pie(values_country_unique_pie='Angola', values_year_unique_pie=2000):
     filtered_df_pie = df_asylum_seekers_pie[(df_asylum_seekers_pie['Year']== values_year_unique_pie) & 
     (df_asylum_seekers_pie['Country / territory of asylum/residence']== values_country_unique_pie)]
     filtered_df_pie = filtered_df_pie.sort_values(by="Applied during year", ascending=False).head(10)
 
     bar_fig = px.pie(data_frame=filtered_df_pie, values=numeric_values_pie[0], names="Origin", template="seaborn",
-    hover_data="Origin", custom_data="Origin", title=f"{values_country_unique_pie} & {values_year_unique_pie}")
-    bar_fig.update_layout(height=510)
+    hover_data="Origin", custom_data="Origin", title=f"Country {values_country_unique_pie} & Year {values_year_unique_pie}")
+    bar_fig.update_layout(paper_bgcolor='#e5ecf6', height=510)
     return bar_fig
 
-multi_select_country_pie = dcc.Dropdown(id='multi_select_country_pie', options=values_country_unique_pie, value='Afghanistan', clearable=False)
+multi_select_country_pie = dcc.Dropdown(id='multi_select_country_pie', options=values_country_unique_pie, value='Angola', clearable=False)
 select_year_pie = dcc.Dropdown(id='select_year_pie', options=values_year_unique_pie, value=2000, clearable=False)
 
 ##########################################################################################################################################################################
@@ -223,18 +278,19 @@ values_rsd_procedure_origin_unique_pie  = df_asylum_seekers_origin_pie['RSD proc
 
 numeric_values_origin_pie = ['Tota pending start-year', 'of which UNHCR-assisted(start-year)', 'Applied during year']
 
-def create_origin_pie(values_origin_unique_origin_pie='Afghanistan', values_year_unique_origin_pie=2000):
+def create_origin_pie(values_origin_unique_origin_pie='Angola', values_year_unique_origin_pie=2000):
     filtered_df_origin_pie = df_asylum_seekers_origin_pie[(df_asylum_seekers_origin_pie['Year']== values_year_unique_origin_pie) & 
     (df_asylum_seekers_origin_pie['Origin']== values_origin_unique_origin_pie)]
     filtered_df_origin_pie = filtered_df_origin_pie.sort_values(by="Applied during year", ascending=False).head(10)
 
     bar_fig = px.pie(data_frame=filtered_df_origin_pie, values=numeric_values_origin_pie[0], names="Country / territory of asylum/residence", template="seaborn",
-    hover_data="Country / territory of asylum/residence", custom_data="Country / territory of asylum/residence", title=f"{values_origin_unique_origin_pie} & {values_year_unique_origin_pie}")
-    bar_fig.update_layout(height=510)
+    hover_data="Country / territory of asylum/residence", custom_data="Country / territory of asylum/residence", title=f"Origin {values_origin_unique_origin_pie} & Year {values_year_unique_origin_pie}")
+    bar_fig.update_layout(paper_bgcolor='#e5ecf6', height=510)
     return bar_fig
 
-multi_select_country_origin_pie = dcc.Dropdown(id='multi_select_country_origin_pie', options=values_country_unique_origin_pie, value='Afghanistan', clearable=False)
+multi_select_country_origin_pie = dcc.Dropdown(id='multi_select_country_origin_pie', options=values_country_unique_origin_pie, value='Angola', clearable=False)
 select_year_origin_pie = dcc.Dropdown(id='select_year_origin_pie', options=values_year_unique_origin_pie, value=2000, clearable=False)
+
 ##########################################################################################################################################################################
 
 app = Dash(title="Asylum Dashboard Report")
@@ -253,6 +309,22 @@ app.layout = html.Div(
                     [
                         html.Br(),
                         html.Br(),
+                        html.Br(),
+                        html.Br(),
+
+                        html.H3
+                        (
+                            children=
+                            [
+                                dbc.Label("TOP 10 Data Set of Year vs Country Territory of Asylum Residence vs Origin vs RSD Procedure type Level vs Applied during"),
+                            ],
+                            style={"text-align":"center", "display": "inline-block", "width": "100%"} 
+                        ),
+
+                        html.Br(),
+                        html.Br(),
+                        html.Br(),
+                        html.Br(),
 
                         html.Div
                         (
@@ -269,6 +341,23 @@ app.layout = html.Div(
                     children=
                     [
                         html.Br(),
+                        html.Br(),
+                        html.Br(),
+                        html.Br(),
+
+                        html.H3
+                        (
+                            children=
+                            [
+                                dbc.Label("TOP 10 of Origin vs Country Territory of Asylum Residence vs RSD Procedure type Level vs Applied during Year"),
+                            ],
+                            style={"text-align":"center", "display": "inline-block", "width": "100%"} 
+                        ),
+
+                        html.Br(),
+                        html.Br(),
+                        html.Br(),
+                        html.Br(),
 
                         html.Div
                         (
@@ -277,13 +366,8 @@ app.layout = html.Div(
                                 multi_select_origin, multi_select_rsd_procedure_unique, multi_select_year,
                                 dcc.Graph(id='country_chart', figure=create_country_chart())
                             ],
-                            style={"display": "inline-block", "width": "100%"} 
+                            style={"display": "inline-block", "width": "60%"} 
                         ),  
-
-                        html.Br(),
-                        html.Br(),
-                        html.Br(),
-                        html.Br(),
 
                         html.Div
                         (
@@ -292,42 +376,73 @@ app.layout = html.Div(
                                 multi_select_origin_1, multi_select_rsd_procedure_unique_country, multi_select_year_1,
                                 dcc.Graph(id='country_chart_1', figure=create_country_chart_1())
                             ],
-                            style={"display": "inline-block", "width": "100%"} 
+                            style={"display": "inline-block", "width": "40%"} 
+                        ),
+
+                        html.Br(),
+                        html.Br(),   
+                        html.Br(),
+                        html.Br(),   
+
+                        html.H3
+                        (
+                            children=
+                            [
+                                dbc.Label("TOP 10 of Origin vs Country Territory of Asylum Residence vs RSD Procedure type Level vs Applied during Year"),
+                            ],
+                            style={"text-align":"center", "display": "inline-block", "width": "100%"} 
+                        ),
+
+                        html.Br(),
+                        html.Br(),
+                        html.Br(),
+                        html.Br(),
+
+                        html.Div
+                        ( 
+                            children=
+                            [
+                                select_origin, select_origin_year, 
+                                dcc.Graph(id='origin_chart', figure=create_origin_chart()),
+                            ],
+                            style={"display": "inline-block", "width": "60%"} 
+                        ),
+
+                        html.Div
+                        ( 
+                            children=
+                            [
+                                multi_select_country_chart, multi_select_year_chart, 
+                                dcc.Graph(id='country_charting', figure=create_country_charting()),
+                            ],
+                            style={"display": "inline-block", "width": "40%"} 
                         ),
                     ],
                 ),
 
-            #     dcc.Tab(label="TOP 10 of Origin vs RSD Procedure type Level vs Applied during Year",
-            #     children=
-            #      [
-            #         html.Br(),
-
-            #         html.Div
-            #         (
-            #             children=
-            #             [
-            #                 multi_select_origin_1, multi_select_rsd_procedure_unique_country, multi_select_year_1,
-            #                 dcc.Graph(id='country_chart_1', figure=create_country_chart_1())
-            #             ],
-            #             style={"display": "inline-block", "width": "100%"} 
-            #         ),
-            #     ],
-            # ),
 
             dcc.Tab(label="TOP 10 of Origin vs Country Territory of asylum Residence vs Applied during Year",
                 children=
                  [  
-                    
+
                     html.Br(),
-                    html.Div
-                    ( 
+                    html.Br(),
+                    html.Br(),
+                    html.Br(),
+
+                    html.H3
+                    (
                         children=
                         [
-                            multi_select_segment_density_heatmap, multi_select_origin_density_heatmap,
-                            dcc.Graph(id='segment_density_heatmap', figure=create_segment_density_heatmap()),
+                            dbc.Label("TOP 10 of Origin vs Country Territory of asylum Residence vs Applied during Year"),
                         ],
-                        style={"display": "inline-block", "width": "50%"} 
+                        style={"text-align":"center", "display": "inline-block", "width": "100%"} 
                     ),
+                    
+                    html.Br(),
+                    html.Br(),
+                    html.Br(),
+                    html.Br(),
 
                     html.Div
                     ( 
@@ -339,6 +454,30 @@ app.layout = html.Div(
                         style={"display": "inline-block", "width": "50%"} 
                     ),
 
+                    html.Div
+                    ( 
+                        children=
+                        [
+                            multi_select_segment_density_heatmap, multi_select_origin_density_heatmap,
+                            dcc.Graph(id='segment_density_heatmap', figure=create_segment_density_heatmap()),
+                        ],
+                        style={"display": "inline-block", "width": "50%"} 
+                    ),
+
+                    html.Br(),
+                    html.Br(),
+                    html.Br(),
+                    html.Br(),
+
+                    html.H3
+                    (
+                        children=
+                        [
+                            dbc.Label("TOP 10 of Origin vs Country Territory of asylum Residence vs Applied during Year"),
+                        ],
+                        style={"text-align":"center", "display": "inline-block", "width": "100%"} 
+                    ),
+                    
                     html.Br(),
                     html.Br(),
                     html.Br(),
@@ -365,14 +504,6 @@ app.layout = html.Div(
                     ),
                 ],
             ),
-
-            # dcc.Tab(label="TOP 10 of Origin vs Country Territory of asylum Residence vs Applied during Year",
-            #     children=
-            #      [  
-                    
-                    
-            #     ],
-            # ),
         ]),
     ],
     style={"padding":"50px"}
@@ -406,6 +537,16 @@ def update_country_pie(values_country_unique_pie, values_year_unique_pie):
 @callback(Output('origin_pie', "figure"), [Input('multi_select_country_origin_pie', "value"), ], [Input('select_year_origin_pie', "value"), ])
 def update_origin_pie(values_country_unique_origin_pie, values_year_unique_origin_pie):
     return create_origin_pie(values_country_unique_origin_pie, values_year_unique_origin_pie)
+
+
+@callback(Output('country_charting', "figure"), [Input('multi_select_country_chart', "value"), ], [Input('multi_select_year_chart', "value"), ], )
+def update_country_charting(values_country_unique_chart, values_year_unique_chart):
+    return create_country_charting(values_country_unique_chart, values_year_unique_chart)
+
+
+@callback(Output('origin_chart', "figure"), [Input('select_origin', "value"), ], [Input('select_origin_year', "value"), ], )
+def update_origin_chart(values_unique_origin, values_unique_year):
+    return create_origin_chart(values_unique_origin, values_unique_year)
 
 
 if __name__ == "__main__":
